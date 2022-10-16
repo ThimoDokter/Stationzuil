@@ -1,5 +1,5 @@
 import time
-tm_year = 0
+import random
 
 print("Welkom, Om een review achter te laten vragen wij u graag om een aantal gegevens")
 #onderstaande functie, vraagt de gegevens van de gebruiker en returnd
@@ -21,8 +21,19 @@ def gebruikers_vragen():
             print(bericht)
             i = 1
             break
+
     tijd = time.asctime()
     print(tijd)
+
     lijst = [naam, bericht,tijd]
     return lijst
 gebruikers_vragen()
+
+def randomstation():
+    i = 0
+    while i == 0:
+        stations = ['Arnhem','Almere', 'Amersfoort', 'Almelo', 'Alkmaar', 'Apeldoorn', 'Assen', 'Amsterdam', 'Boxtel', 'Breda', 'Dordrecht', 'Delft', 'Deventer', 'Enschede', 'Gouda', 'Groningen', 'Haarlem', 'Helmond', 'Hoorn', 'Heerlen', 'Den Bosch', 'Hilversum', 'Leiden', 'Lelystad', 'Leeuwarden', 'Maastricht', 'Nijmegen', 'Oss', 'Roermond', 'Roosendaal', 'Sittard', 'Tilburg', 'Utrecht', 'Venlo', 'Vlissingen', 'Zaandam', 'Zwolle', 'Zutphen']
+        station = stations[random.randrange(1,38)]
+        print(station)
+        i = 1
+randomstation()
