@@ -50,9 +50,26 @@ def randomstation():
         i = 1
     return station
 station = randomstation()
+def csvfilewrite():
+    """"
+    reads csv file and then adds gebruikers_gegevens and station to file
+    :returns
+    Nothing
+    """
+    lijst = []
+    gebruiker_gegevens = gebruikers_vragen()
+    gebruiker_gegevens.append(station)
+    with open("kaas.csv") as reader:
+        read = csv.reader(reader, delimiter=',')
+        for lines in read:
+            lijst.append(lines)
 
-def csvfilewrite(station):
-    kaas = 1
+
+    lijst.append(gebruiker_gegevens)
+
+    with open("kaas.csv", "w", newline= '') as f:
+        write = csv.writer(f)
+        write.writerows(lijst)
 
 
 
@@ -76,6 +93,7 @@ while i == 0:
         print("kaas")
     if input1 == 2:
         csvfilewrite()
+
 
     if input1 == 3:
         moderator()
