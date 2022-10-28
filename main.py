@@ -1,7 +1,7 @@
 import time
 import random
 import csv
-
+import psycopg2
 
 
 def gebruikers_vragen():
@@ -59,6 +59,7 @@ def csvfilewrite():
     lijst = []
     gebruiker_gegevens = gebruikers_vragen()
     gebruiker_gegevens.append(station)
+    gebruiker_gegevens.append("afwachting")
     with open("kaas.csv") as reader:
         read = csv.reader(reader, delimiter=',')
         for lines in read:
@@ -77,7 +78,28 @@ def moderator():
     #eerst word er gevraagd om de gegevens van de moderator, zoals naam en e-mailadres
     naam = input("Voer alstublieft uw naam in:")
     e_mail = input("Voer alstublieft uw e-mail in:")
-    print("kaas")
+    lijst = []
+    with open("kaas.csv") as reader:
+        read = csv.reader(reader, delimiter=',')
+        for lines in read:
+            lijst.append(lines)
+    for lines in lijst:
+        if lines[4] == "afwachting":
+            print("wilt u onderstaande review goedkeuren?(ja of nee)\n naam: {}\n bericht:{}" .format(lines[0], lines[1]))
+            input_moderator = input("ja of nee?")
+            if input_moderator == "ja":
+                print("bericht is goedgekeurd")
+                lines[4] = "goedgekeurd"
+            elif input_moderator == "nee":
+                print("bericht is afgekeurd")
+                lines[4] = "afgekeurd"
+    print("sorry, er zijn geen reviews meer.")
+    with open("kaas.csv", "w", newline= '') as f:
+        write = csv.writer(f)
+        write.writerows(lijst)
+
+
+
 
 
 #hieronder is gemaakt om de code te testen
