@@ -2,6 +2,18 @@ import time
 import random
 import csv
 import psycopg2
+from datetime import datetime
+connection_string = "host='localhost' dbname='stationzuil2' user='postgres' password='kaas'"
+# conn = psycopg2.connect(connection_string)  # get a connection with the database
+# cursor = conn.cursor()
+#
+# query ="""INSERT INTO keuring (keuring_id, goed_afgekeurd, datum, tijd)
+#            VALUES (1, 'goedgekeurd', '2022-10-30', '13:01:00');"""
+#
+# cursor.execute(query)
+# conn.commit()
+
+
 
 
 def gebruikers_vragen():
@@ -30,10 +42,19 @@ def gebruikers_vragen():
             i = 1
             break
 
-    tijd = time.asctime()
-    print(tijd)
+    secconds = datetime.now().second
+    minute = datetime.now().minute
+    hour = datetime.now().hour
+    tijd_string = str(hour) + ":" + str(minute) + ":" + str(secconds)
+    print(tijd_string)
 
-    lijst = [naam, bericht,tijd]
+    month = datetime.now().month
+    date = datetime.now().day
+    year = datetime.now().year
+    datum_string = str(year) + "-" + str(month) + "-" + str(date)
+    print(datum_string)
+
+    lijst = [naam, bericht,tijd_string, datum_string]
     return lijst
 
 def randomstation():
@@ -56,18 +77,22 @@ def csvfilewrite():
     :returns
     Nothing
     """
+    i= 1
     lijst = []
-    gebruiker_gegevens = gebruikers_vragen()
-    gebruiker_gegevens.append(station)
-    gebruiker_gegevens.append("afwachting")
+
     with open("kaas.csv") as reader:
         read = csv.reader(reader, delimiter=',')
         for lines in read:
+            i += 1
             lijst.append(lines)
+
+    gebruiker_gegevens = gebruikers_vragen()
+    gebruiker_gegevens.append(station)
+
 
 
     lijst.append(gebruiker_gegevens)
-
+    print(lijst)
     with open("kaas.csv", "w", newline= '') as f:
         write = csv.writer(f)
         write.writerows(lijst)
@@ -84,19 +109,52 @@ def moderator():
         for lines in read:
             lijst.append(lines)
     for lines in lijst:
-        if lines[4] == "afwachting":
-            print("wilt u onderstaande review goedkeuren?(ja of nee)\n naam: {}\n bericht:{}" .format(lines[0], lines[1]))
-            input_moderator = input("ja of nee?")
-            if input_moderator == "ja":
-                print("bericht is goedgekeurd")
-                lines[4] = "goedgekeurd"
-            elif input_moderator == "nee":
-                print("bericht is afgekeurd")
-                lines[4] = "afgekeurd"
+        print("wilt u onderstaande review goedkeuren?(ja of nee)\n naam: {}\n bericht:{}" .format(lines[1], lines[2]))
+        input_moderator = input("ja of nee?")
+        if input_moderator == "ja":
+            print("bericht is goedgekeurd")
+            goed_fout = "goedgekeurd"
+        elif input_moderator == "nee":
+            print("bericht is afgekeurd")
+            goed_fout = "afgekeurd"
+
+
+        secconds = datetime.now().second
+        minute = datetime.now().minute
+        hour = datetime.now().hour
+        tijd_string = str(hour) + ":" + str(minute) + ":" + str(secconds)
+        print(tijd_string)
+
+        month = datetime.now().month
+        date = datetime.now().day
+        year = datetime.now().year
+        datum_string = str(year) + "-" + str(month) + "-" + str(date)
+        print(datum_string)
+
+
+        conn = psycopg2.connect(connection_string)  # get a connection with the database
+        cursor = conn.cursor()
+        query ="""INSERT INTO keuring ( goed_afgekeurd, datum, tijd)
+                    VALUES (%s, %s, %s);"""
+        query1 = """INSERT INTO review (  datum, tijd, naam, bericht, station )
+                    VALUES ( %s, %s, %s, %s, %s);"""
+        query2 = """INSERT INTO moderator ( naam, e_mail_adres)
+                    VALUES (%s, %s);"""
+        data = ( goed_fout, datum_string, tijd_string)
+        data1 = ( lines[3], lines[2], lines[0], lines[1], lines[4])
+        data2 = ( naam , e_mail)
+        cursor.execute(query, data)
+        cursor.execute(query1, data1)
+        cursor.execute(query2, data2)
+        conn.commit()
+        conn.close()
+
+
+    lijst1 = []
     print("sorry, er zijn geen reviews meer.")
     with open("kaas.csv", "w", newline= '') as f:
         write = csv.writer(f)
-        write.writerows(lijst)
+        write.writerows(lijst1)
 
 
 
