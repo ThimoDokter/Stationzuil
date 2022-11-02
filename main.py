@@ -48,7 +48,7 @@ def gebruikers_vragen():
     tijd_string = str(hour) + ":" + str(minute) + ":" + str(secconds)
     print(tijd_string)
 
-    month = datetime.now().month
+    month = 11 #datetime.now().month
     date = datetime.now().day
     year = datetime.now().year
     datum_string = str(year) + "-" + str(month) + "-" + str(date)
