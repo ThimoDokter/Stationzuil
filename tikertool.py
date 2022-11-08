@@ -120,6 +120,7 @@ def moderator_start(naam, e_mail, keuring):
 
     if keuring == "goedgekeurd" or keuring == "afgekeurd":# als het bericht goed of afgekeurd is word onderstaande code uitgevoerd
         print("kaas")
+        print(lijst[0][1])
         moderator_tijd = get_time()# pakt de tijd uit de functie "Get_Time()"
         tijd_string = moderator_tijd[0] # voegt de waardes toe aan een lijst
         datum_string = moderator_tijd[1] # Voegt de waardes toe aan een lijst
@@ -132,7 +133,7 @@ def moderator_start(naam, e_mail, keuring):
         query2 = """INSERT INTO moderator ( naam, e_mail_adres)
                            VALUES (%s, %s);"""# query voor het writen van naam, e_mail_adres naar de tabel moderator
         data = (keuring, datum_string, tijd_string)# vult de waardes in op de placeholders
-        data1 = (lines[3], lines[2], lines[0], lines[1], lines[4])# vult de waardes in op de placeholders
+        data1 = (lijst[0][3], lijst[0][2], lijst[0][0], lijst[0][1], lijst[0][4])# vult de waardes in op de placeholders
         data2 = (naam, e_mail)# vult de waardes in op de placeholders
         cursor.execute(query, data)# writen van de data en de queries naar de database
         cursor.execute(query1, data1)# writen van de data en de queries naar de database
