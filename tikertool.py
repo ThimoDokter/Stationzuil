@@ -107,13 +107,19 @@ def moderator_start(naam, e_mail, keuring):
         for lines in read:
             lijst.append(lines)
     lijst_leeg = []
-    if lijst == lijst_leeg:# als de lijst uit het csv bestand leeg is word de moderator naar een scherm gestuurd die zegt dat alles gemodereerd is
+    if lijst == lijst_leeg:
         moderator_eind_scherm()
-    else:#als er wel dingen is het bestand zit word dit naar de moderator gestuurd om gemodereerd te worden.
-        lol = moderator_scherm(lijst[0][0], lijst[0][1], naam, e_mail)
+    if keuring != "goedgekeurd" and keuring != "afgekeurd":
+        moderator_scherm(lijst[0][0], lijst[0][1], naam, e_mail)
+
+
+    # if lijst == lijst_leeg:# als de lijst uit het csv bestand leeg is word de moderator naar een scherm gestuurd die zegt dat alles gemodereerd is
+    #     moderator_eind_scherm()
+    # else:#als er wel dingen is het bestand zit word dit naar de moderator gestuurd om gemodereerd te worden.
+    #     lol = moderator_scherm(lijst[0][0], lijst[0][1], naam, e_mail)
 
     if keuring == "goedgekeurd" or keuring == "afgekeurd":# als het bericht goed of afgekeurd is word onderstaande code uitgevoerd
-
+        print("kaas")
         moderator_tijd = get_time()# pakt de tijd uit de functie "Get_Time()"
         tijd_string = moderator_tijd[0] # voegt de waardes toe aan een lijst
         datum_string = moderator_tijd[1] # Voegt de waardes toe aan een lijst
@@ -134,10 +140,10 @@ def moderator_start(naam, e_mail, keuring):
         conn.commit()# commit de executes
         conn.close()# sluit de database connectie
         lijst1 = lijst[1:]# haalt de eerste lijn uit de lijst
-        keuring = ""
         with open("kaas.csv", "w", newline='') as f:# write de lijst zonder de eerste waarde terug naar het csv bestand
             write = csv.writer(f)
             write.writerows(lijst1)
+        moderator_start(naam, e_mail,"")
 
 def root_clear():
     """"
@@ -184,6 +190,7 @@ def bericht_achtergelaten():
                    padx=20)
     label2.grid(pady=(0,10), column=0, row=1, columnspan=2)# packed de label met een grid
     frame1.pack(pady=(0, 70))# create een frame
+
 
 
 def gebruikersvragen():

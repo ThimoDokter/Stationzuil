@@ -1,0 +1,26 @@
+
+create table keuring(
+	keuring_id serial NOT NULL,
+	goed_afgekeurd varchar(255) NOT NULL,
+	datum date NOT NULL,
+	tijd time NOT NULL,
+	PRIMARY KEY(keuring_id)
+);
+
+create table moderator (
+	e_mail_adres varchar(255) NOT NULL,
+	naam varchar(255) NOT NULL,
+	keuring_id serial NOT NUll,
+	FOREIGN KEY(keuring_id) REFERENCES keuring(keuring_id)
+);
+create table review(
+	review_id serial NOT NULL,
+	naam varchar(255) NOT NULL,
+	bericht varchar(255) NOT NULL,
+	datum date NOT NULL,
+	tijd time NOT NULL,
+	station varchar(255) NOT NULL,
+	keuring_id serial NOT NULL,
+	PRIMARY KEY(review_id),
+	FOREIGN KEY(keuring_id) REFERENCES keuring(keuring_id)
+);
