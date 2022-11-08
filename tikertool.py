@@ -1,16 +1,28 @@
 import tkinter
 from tkinter import *
+from PIL import ImageTk, Image
 from datetime import datetime
 import random
 import csv
 import psycopg2
-
+import requests
+import math
+api_key = "c1ea90dc353396b8ef9573319e598c85"
 connection_string = "host='localhost' dbname='stationzuilfinal' user='postgres' password='kaas'"
 
-
+stationslijst = ['Arnhem', 'Almere', 'Oss']
 
 root = Tk()
 root.configure(bg="blue")
+def get_temprature(stad):
+    response = requests.get("http://api.openweathermap.org/geo/1.0/direct?q={},NL&limit=1&appid={}".format(stad, api_key))
+    lat = response.json()[0]['lat']
+    lon = response.json()[0]['lon']
+
+    response =  requests.get("https://api.openweathermap.org/data/2.5/weather?lat={}&lon={}&appid={}".format(lat, lon, api_key))
+    temperature = response.json()["main"]["temp"] -273.15
+    temperature = math.floor(temperature)
+    return temperature
 def get_time():
 
     secconds = datetime.now().second
@@ -35,8 +47,8 @@ def randomstation():
     """
     i = 0
     while i == 0:
-        stations = ['Arnhem','Almere', 'Amersfoort', 'Almelo', 'Alkmaar', 'Apeldoorn', 'Assen', 'Amsterdam', 'Boxtel', 'Breda', 'Dordrecht', 'Delft', 'Deventer', 'Enschede', 'Gouda', 'Groningen', 'Haarlem', 'Helmond', 'Hoorn', 'Heerlen', 'Den Bosch', 'Hilversum', 'Leiden', 'Lelystad', 'Leeuwarden', 'Maastricht', 'Nijmegen', 'Oss', 'Roermond', 'Roosendaal', 'Sittard', 'Tilburg', 'Utrecht', 'Venlo', 'Vlissingen', 'Zaandam', 'Zwolle', 'Zutphen']
-        station = stations[random.randrange(1,38)]
+        stations = ['Arnhem','Almere', 'Oss']
+        station = stations[random.randrange(0,3)]
         print(station)
         i = 1
     return station
@@ -168,7 +180,7 @@ def gebruikersvragen():
                    background="yellow",
                    height=300)
     label = Label(master=frame,
-                  text="NS Station /station/",
+                  text="NS Station: {}".format(station),
                   height=2,
                   background='yellow',
                   font=("helvetica",12,"bold"),
@@ -375,9 +387,64 @@ def moderator_eind_scherm():
                    foreground='blue',
                    padx=20)
     label2.grid(pady=(0,10), column=0, row=1, columnspan=2)
+def station_scherm_begin():
+    root_clear()
+    frame = Frame(master=root,
+                   background="yellow",
+                   height=300)
+    label = Label(master=frame,
+                  text="Station keuze",
+                  height=2,
+                  background='yellow',
+                  font=("helvetica",12,"bold"),
+                  foreground='blue')
+    label.pack()
+    frame.pack(ipadx=300, ipady=8, pady=(0, 70))
 
 
-def station_scherm():
+    frame1 = Frame(master=root,
+                   background= 'yellow',
+                   height=400)
+
+    label1 = Label(master=frame1,
+                   text="Selecteer een station!",
+                   background='white',
+                   font=("helvetica",16, 'bold'),
+                   foreground='blue',
+                   padx=20)
+    label1.grid(pady=(0,10), column=0, row=0, columnspan=2)
+    label2 = Label(master=frame1,
+                   text="Station:",
+                   foreground='blue',
+                   font=("Helvetica", 12, 'bold'),
+                   background='yellow')
+    label2.grid(padx=10, column=0, row= 1, sticky="w")
+
+    placeholder = tkinter.StringVar()
+    placeholder.set("kies een station")
+    option = tkinter.OptionMenu(frame1, placeholder, *stationslijst)
+    option.grid(row = 1, column=1)
+
+    button = Button(master=frame1,
+                    text="verzenden",
+                    background="blue",
+                    foreground="yellow",
+                    command=lambda: station_scherm(placeholder.get()))
+    button.grid(row=3, column=0, columnspan=2, pady=(0, 20))
+
+
+    frame1.pack(pady=(0, 70))
+
+
+
+    root.mainloop()
+
+def station_scherm(station):
+    if station == "kies een station":
+        station_scherm_begin()
+    temperatuur = get_temprature(station)
+    print(temperatuur)
+    print(station)
     naamlijst = []
     berichtlijst = []
     stationlijst = []
@@ -401,8 +468,29 @@ def station_scherm():
     print(berichtlijst)
     print(stationlijst)
 
+    # img_lift = Image.open("img_lift.png")
+    # img_lift_resize = img_lift.resize((10, 10))
+    # img_lift_good = ImageTk.PhotoImage(img_lift_resize)
+    #
+    # img_ovfiets = ImageTk.PhotoImage(Image.open("img_ovfiets.png"))
+    # img_pr = ImageTk.PhotoImage(Image.open("img_pr.png"))
+    # img_toilet = ImageTk.PhotoImage(Image.open("img_toilet.png"))
 
+    image = Image.open("img_lift.png")
+    resize_image = image.resize((25, 25))
+    img_lift = ImageTk.PhotoImage(resize_image)
 
+    image1 = Image.open("img_pr.png")
+    resize_image1 = image1.resize((25, 25))
+    img_pr = ImageTk.PhotoImage(resize_image1)
+
+    image2 = Image.open("img_toilet.png")
+    resize_image2 = image2.resize((25, 25))
+    img_toilet = ImageTk.PhotoImage(resize_image2)
+
+    image3 = Image.open("img_ovfiets.png")
+    resize_image3 = image3.resize((25, 25))
+    img_ovfiets = ImageTk.PhotoImage(resize_image3)
 
     root_clear()
     root.geometry("600x400")
@@ -412,7 +500,7 @@ def station_scherm():
                   background="yellow",
                   height=300)
     label = Label(master=frame,
-                  text="NS Station /station/",
+                  text="NS Station: {}".format(station),
                   height=2,
                   background='yellow',
                   font=("helvetica", 12, "bold"),
@@ -425,7 +513,7 @@ def station_scherm():
                   background="white",
                   height=300)
     label2 = Label(master=frame2,
-                  text="NS Station /station/",
+                  text="Temperatuur: {}". format(temperatuur),
                   height=2,
                   background='white',
                   font=("helvetica", 12, "bold"),
@@ -438,9 +526,18 @@ def station_scherm():
                    width=20,
                    background="blue",
                    )
-    kaas = ["kaas","kaas1","kaas2", "kaas3", "kaas4"]
-    for frame in range(0,5):
-
+    print(len(stationlijst))
+    for frame in range(len(stationlijst)):
+        print(frame)
+        if stationlijst[frame] == "Arnhem":
+            picture1 = img_ovfiets
+            picture2 = img_toilet
+        elif stationlijst[frame] == "Almere":
+            picture1 = img_lift
+            picture2 = img_pr
+        elif stationlijst[frame] == "Oss":
+            picture1 = img_lift
+            picture2 = img_pr
 
         coolframe = Frame(master= frame1,
                           width= 20)
@@ -450,22 +547,40 @@ def station_scherm():
                        font=("helvetica", 12, 'bold'),
                        foreground='blue',
                        width=10)
-        label1.grid()
+        label1.grid(sticky= "ew")
         label2 = Label(master=coolframe,
                        text="Station: {}".format(stationlijst[frame]),
                        foreground='blue',
                        font=("Helvetica", 8, 'bold'),
                        background='grey',
                        width=10)
-        label2.grid()
+        label2.grid(sticky= "ew")
         label3 = Label(master=coolframe,
                        text= berichtlijst[frame],
                        foreground='blue',
-                       font=("Helvetica", 12, 'bold'),
+                       font=("Helvetica", 5),
                        background='yellow',
                        wraplength=100,
                        width=10)
-        label3.grid()
+        label3.grid(sticky="ew")
+        label4 = Label(master=coolframe,
+                       text= "Faciliteiten:",
+                       foreground="blue",
+                       font=("Helvetica", 6, 'bold'),
+                       background="yellow",
+                       wraplength=100,
+                       width=10)
+        label4.grid(sticky="ew", row= 4,column= 0,columnspan=2)
+        label7 = Label(master=coolframe, background="#FFC917")
+        label7.grid(row=5, sticky="nesw")
+        label5 = Label(master=coolframe, image=picture1, background= "yellow")
+        label5.image = picture1
+        label5.grid(row=5, column=0, sticky="w", padx=25)
+        label6 = Label(master=coolframe, image= picture2, background="yellow")
+        label6.image = picture2
+        label6.grid(row=5 , column=0, sticky="w")
+
+
         coolframe.grid(sticky="w",column=frame, row=0, padx=5)
 
 
@@ -500,7 +615,7 @@ def startscherm():
                      text="Stationscherm",
                      background='blue',
                      foreground='white',
-                     command=station_scherm
+                     command=station_scherm_begin
                      )
     button1.pack(ipadx=20, ipady=10,pady=3)
 
