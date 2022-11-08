@@ -1,4 +1,5 @@
 #toeveogen alle library's
+import asyncio
 import tkinter
 from tkinter import *
 from PIL import ImageTk, Image
@@ -111,12 +112,6 @@ def moderator_start(naam, e_mail, keuring):
         moderator_eind_scherm()
     if keuring != "goedgekeurd" and keuring != "afgekeurd":
         moderator_scherm(lijst[0][0], lijst[0][1], naam, e_mail)
-
-
-    # if lijst == lijst_leeg:# als de lijst uit het csv bestand leeg is word de moderator naar een scherm gestuurd die zegt dat alles gemodereerd is
-    #     moderator_eind_scherm()
-    # else:#als er wel dingen is het bestand zit word dit naar de moderator gestuurd om gemodereerd te worden.
-    #     lol = moderator_scherm(lijst[0][0], lijst[0][1], naam, e_mail)
 
     if keuring == "goedgekeurd" or keuring == "afgekeurd":# als het bericht goed of afgekeurd is word onderstaande code uitgevoerd
         print("kaas")
@@ -365,7 +360,8 @@ def moderator_scherm(naam, bericht, e_mail,naam_mod):
                    text=bericht,
                    foreground='#003082',
                    font=("Helvetica", 12, 'bold'),
-                   background='#FFC917')
+                   background='#FFC917',
+                   wraplength=250)
     label5.grid(column=1, row=2)# packed de label met een grid
 
     button = Button(master=frame1, # create een button, start de code moderator_start
@@ -378,7 +374,7 @@ def moderator_scherm(naam, bericht, e_mail,naam_mod):
                     text="Afkeuren",
                     background="#003082",
                     foreground="#FFC917",
-                    command=lambda: moderator_start(naam_mod, e_mail, "afgekeurd "))
+                    command=lambda: moderator_start(naam_mod, e_mail, "afgekeurd"))
 
     button1.grid(row=3, column=1, pady=(0, 20) ) # packed de button met een grid
 
