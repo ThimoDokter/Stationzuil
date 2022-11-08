@@ -1,3 +1,5 @@
+
+
 import tkinter
 from tkinter import *
 from PIL import ImageTk, Image
@@ -13,7 +15,7 @@ connection_string = "host='localhost' dbname='stationzuilfinal' user='postgres' 
 stationslijst = ['Arnhem', 'Almere', 'Oss']
 
 root = Tk()
-root.configure(bg="blue")
+root.configure(bg="#003082")
 def get_temprature(stad):
     response = requests.get("http://api.openweathermap.org/geo/1.0/direct?q={},NL&limit=1&appid={}".format(stad, api_key))
     lat = response.json()[0]['lat']
@@ -141,33 +143,33 @@ def root_clear():
 def bericht_achtergelaten():
     root_clear()
     frame = Frame(master=root,
-                   background="yellow",
+                   background="",
                    height=300)
     label = Label(master=frame,
                   text="NS Station /station/",
                   height=2,
-                  background='yellow',
+                  background='#FFC917',
                   font=("helvetica",12,"bold"),
-                  foreground='blue')
+                  foreground='#003082')
     label.pack()
     frame.pack(ipadx=300, ipady=8, pady=(0, 70))
 
     frame1 = Frame(master=root,
-                   background= 'yellow',
+                   background= '#FFC917',
                    height=400)
 
     label1 = Label(master=frame1,
                    text="Bericht succesvol verzonden!",
                    background='white',
                    font=("helvetica",16, 'bold'),
-                   foreground='blue',
+                   foreground='#003082',
                    padx=20)
     label1.grid(pady=(0,10), column=0, row=0, columnspan=2)
     label2 = Label(master=frame1,
                    text="Het bericht is succesvol verzonden,\nen zal binnenkort beoordeeld worden",
-                   background='yellow',
+                   background='#FFC917',
                    font=("helvetica",12, 'bold'),
-                   foreground='blue',
+                   foreground='#003082',
                    padx=20)
     label2.grid(pady=(0,10), column=0, row=1, columnspan=2)
     frame1.pack(pady=(0, 70))
@@ -177,40 +179,40 @@ def gebruikersvragen():
 
     root_clear()
     frame = Frame(master=root,
-                   background="yellow",
+                   background="#FFC917",
                    height=300)
     label = Label(master=frame,
                   text="NS Station: {}".format(station),
                   height=2,
-                  background='yellow',
+                  background='#FFC917',
                   font=("helvetica",12,"bold"),
-                  foreground='blue')
+                  foreground='#003082')
     label.pack()
     frame.pack(ipadx=300, ipady=8, pady=(0, 70))
 
 
     frame1 = Frame(master=root,
-                   background= 'yellow',
+                   background= '#FFC917',
                    height=400)
 
     label1 = Label(master=frame1,
                    text="Laat hier uw opmerking achter!",
                    background='white',
                    font=("helvetica",16, 'bold'),
-                   foreground='blue',
+                   foreground='#003082',
                    padx=20)
     label1.grid(pady=(0,10), column=0, row=0, columnspan=2)
     label2 = Label(master=frame1,
                    text="Naam:",
-                   foreground='blue',
+                   foreground='#003082',
                    font=("Helvetica", 12, 'bold'),
-                   background='yellow')
+                   background='#FFC917')
     label2.grid(padx=20, column=0, row= 1, sticky="w")
     label3 = Label(master=frame1,
                    text="Bericht:",
-                   foreground='blue',
+                   foreground='#003082',
                    font=("Helvetica", 12, 'bold'),
-                   background='yellow')
+                   background='#FFC917')
     label3.grid(padx=20, pady=20, row=2, column=0, sticky="w")
 
     entry = Entry(master=frame1)
@@ -221,8 +223,8 @@ def gebruikersvragen():
 
     button = Button(master=frame1,
                     text="verzenden",
-                    background="blue",
-                    foreground="yellow",
+                    background="#003082",
+                    foreground="#FFC917",
                     command=lambda: standaarvragen(entry.get(), entry1.get()))
     button.grid(row=3, column=0, columnspan=2, pady=(0, 20))
 
@@ -236,38 +238,38 @@ def gebruikersvragen():
 def moderator_scherm_inlog():
     root_clear()
     frame = Frame(master=root,
-                   background="yellow",
+                   background="#FFC917",
                    height=300)
     label = Label(master=frame,
                   text="NS Station /station/",
                   height=2,
-                  background='yellow',
+                  background='#FFC917',
                   font=("helvetica",12,"bold"),
-                  foreground='blue')
+                  foreground='#003082')
     label.pack()
     frame.pack(ipadx=300, ipady=8, pady=(0, 70))
     frame1 = Frame(master=root,
-                   background= 'yellow',
+                   background= '#FFC917',
                    height=400)
 
     label1 = Label(master=frame1,
                    text="Moderator inlog",
                    background='white',
                    font=("helvetica",16, 'bold'),
-                   foreground='blue',
+                   foreground='#003082',
                    padx=20)
     label1.grid(pady=(0,10), column=0, row=0, columnspan=2)
     label2 = Label(master=frame1,
                    text="Naam:",
-                   foreground='blue',
+                   foreground='#003082',
                    font=("Helvetica", 12, 'bold'),
-                   background='yellow')
+                   background='#FFC917')
     label2.grid(padx=20, column=0, row= 1, sticky="w")
     label3 = Label(master=frame1,
                    text="E-mail",
-                   foreground='blue',
+                   foreground='#003082',
                    font=("Helvetica", 12, 'bold'),
-                   background='yellow')
+                   background='#FFC917')
     label3.grid(padx=20, pady=20, row=2, column=0, sticky="w")
 
     entry = Entry(master=frame1)
@@ -278,8 +280,8 @@ def moderator_scherm_inlog():
 
     button = Button(master=frame1,
                     text="verzenden",
-                    background="blue",
-                    foreground="yellow",
+                    background="#003082",
+                    foreground="#FFC917",
                     command=lambda: moderator_start(entry.get(), entry1.get(), "leeg"))
     button.grid(row=3, column=0, columnspan=2, pady=(0, 20), padx=200)
 
@@ -289,66 +291,66 @@ def moderator_scherm(naam, bericht, e_mail,naam_mod):
 
     root_clear()
     frame = Frame(master=root,
-                  background="yellow",
+                  background="#FFC917",
                   height=300)
     label = Label(master=frame,
                   text="NS Station /station/",
                   height=2,
-                  background='yellow',
+                  background='#FFC917',
                   font=("helvetica", 12, "bold"),
-                  foreground='blue')
+                  foreground='#003082')
     label.pack()
     frame.pack(ipadx=300, ipady=8, pady=(0, 70))
 
 
     frame1 = Frame(master=root,
-                   background= 'yellow',
+                   background= '#FFC917',
                    height=400)
 
     label1 = Label(master=frame1,
                    text="Moderator beoordeling",
                    background='white',
                    font=("helvetica",16, 'bold'),
-                   foreground='blue',
+                   foreground='#003082',
                    padx=20)
     label1.grid(pady=(0,10), column=0, row=0, columnspan=2)
     label2 = Label(master=frame1,
                    text="Naam:",
-                   foreground='blue',
+                   foreground='#003082',
                    font=("Helvetica", 12, 'bold'),
-                   background='yellow')
+                   background='#FFC917')
     label2.grid(padx=20, column=0, row= 1, sticky="w")
     label3 = Label(master=frame1,
                    text="bericht",
-                   foreground='blue',
+                   foreground='#003082',
                    font=("Helvetica", 12, 'bold'),
-                   background='yellow')
+                   background='#FFC917')
     label3.grid(padx=20, pady=20, row=2, column=0, sticky="w")
 
     label4 = Label(master=frame1,
                    text=naam,
-                   foreground='blue',
+                   foreground='#003082',
                    font=("Helvetica", 12, 'bold'),
-                   background='yellow')
+                   background='#FFC917')
     label4.grid(column=1, row=1)
 
     label5 = Label(master=frame1,
                    text=bericht,
-                   foreground='blue',
+                   foreground='#003082',
                    font=("Helvetica", 12, 'bold'),
-                   background='yellow')
+                   background='#FFC917')
     label5.grid(column=1, row=2)
 
     button = Button(master=frame1,
                     text="Goedkeuren",
-                    background="blue",
-                    foreground="yellow",
+                    background="#003082",
+                    foreground="#FFC917",
                     command=lambda: moderator_start(naam_mod, e_mail, "goedgekeurd"))
     button.grid(row=3, column=0, pady=(0, 20))
     button1 = Button(master=frame1,
                     text="Afkeuren",
-                    background="blue",
-                    foreground="yellow",
+                    background="#003082",
+                    foreground="#FFC917",
                     command=lambda: moderator_start(naam_mod, e_mail, "afgekeurd "))
 
     button1.grid(row=3, column=1, pady=(0, 20) )
@@ -358,66 +360,66 @@ def moderator_scherm(naam, bericht, e_mail,naam_mod):
 def moderator_eind_scherm():
     root_clear()
     frame = Frame(master=root,
-                   background="yellow",
+                   background="#FFC917",
                    height=300)
     label = Label(master=frame,
                   text="NS Station /station/",
                   height=2,
-                  background='yellow',
+                  background='#FFC917',
                   font=("helvetica",12,"bold"),
-                  foreground='blue')
+                  foreground='#003082')
     label.grid(pady=(0,10), column=0, row=0, columnspan=2)
     frame.grid(pady=(0,10), column=0, row=0, columnspan=2)
 
     frame1 = Frame(master=root,
-                   background= 'yellow',
+                   background= '#FFC917',
                    height=400)
     frame1.grid(pady=(0,10), column=0, row=0, columnspan=2)
     label1 = Label(master=frame1,
                    text="moderator",
                    background='white',
                    font=("helvetica",16, 'bold'),
-                   foreground='blue',
+                   foreground='#003082',
                    padx=20)
     label1.grid(pady=(0,10), column=0, row=0, columnspan=2)
     label2 = Label(master=frame1,
                    text="Er zijn berichten meer om te beoordelen",
-                   background='yellow',
+                   background='#FFC917',
                    font=("helvetica",12, 'bold'),
-                   foreground='blue',
+                   foreground='#003082',
                    padx=20)
     label2.grid(pady=(0,10), column=0, row=1, columnspan=2)
 def station_scherm_begin():
     root_clear()
     frame = Frame(master=root,
-                   background="yellow",
+                   background="#FFC917",
                    height=300)
     label = Label(master=frame,
                   text="Station keuze",
                   height=2,
-                  background='yellow',
+                  background='#FFC917',
                   font=("helvetica",12,"bold"),
-                  foreground='blue')
+                  foreground='#003082')
     label.pack()
     frame.pack(ipadx=300, ipady=8, pady=(0, 70))
 
 
     frame1 = Frame(master=root,
-                   background= 'yellow',
+                   background= '#FFC917',
                    height=400)
 
     label1 = Label(master=frame1,
                    text="Selecteer een station!",
                    background='white',
                    font=("helvetica",16, 'bold'),
-                   foreground='blue',
+                   foreground='#003082',
                    padx=20)
     label1.grid(pady=(0,10), column=0, row=0, columnspan=2)
     label2 = Label(master=frame1,
                    text="Station:",
-                   foreground='blue',
+                   foreground='#003082',
                    font=("Helvetica", 12, 'bold'),
-                   background='yellow')
+                   background='#FFC917')
     label2.grid(padx=10, column=0, row= 1, sticky="w")
 
     placeholder = tkinter.StringVar()
@@ -427,8 +429,8 @@ def station_scherm_begin():
 
     button = Button(master=frame1,
                     text="verzenden",
-                    background="blue",
-                    foreground="yellow",
+                    background="#003082",
+                    foreground="#FFC917",
                     command=lambda: station_scherm(placeholder.get()))
     button.grid(row=3, column=0, columnspan=2, pady=(0, 20))
 
@@ -497,14 +499,14 @@ def station_scherm(station):
 
 
     frame = Frame(master=root,
-                  background="yellow",
+                  background="#FFC917",
                   height=300)
     label = Label(master=frame,
                   text="NS Station: {}".format(station),
                   height=2,
-                  background='yellow',
+                  background='#FFC917',
                   font=("helvetica", 12, "bold"),
-                  foreground='blue')
+                  foreground='#003082')
     label.pack()
     frame.pack(ipadx=300, ipady=8, pady=(0, 0))
 
@@ -517,14 +519,14 @@ def station_scherm(station):
                   height=2,
                   background='white',
                   font=("helvetica", 12, "bold"),
-                  foreground='blue')
+                  foreground='#003082')
     label2.pack()
-    frame2.pack(ipadx=300, ipady=8, pady=(0, 70))
+    frame2.pack(ipadx=300, ipady=8)
 
     frame1 = Frame(master=root,
                    height=400,
                    width=20,
-                   background="blue",
+                   background="#003082",
                    )
     print(len(stationlijst))
     for frame in range(len(stationlijst)):
@@ -545,43 +547,43 @@ def station_scherm(station):
                        text=naamlijst[frame],
                        background='white',
                        font=("helvetica", 12, 'bold'),
-                       foreground='blue',
-                       width=10)
-        label1.grid(sticky= "ew")
+                       foreground='#003082',
+                       width=10,)
+        label1.grid(sticky= "ew", pady=(10,0))
         label2 = Label(master=coolframe,
                        text="Station: {}".format(stationlijst[frame]),
-                       foreground='blue',
+                       foreground='#003082',
                        font=("Helvetica", 8, 'bold'),
                        background='grey',
                        width=10)
         label2.grid(sticky= "ew")
         label3 = Label(master=coolframe,
                        text= berichtlijst[frame],
-                       foreground='blue',
-                       font=("Helvetica", 5),
-                       background='yellow',
+                       foreground='#003082',
+                       font=("Helvetica", 7),
+                       background='#FFC917',
                        wraplength=100,
                        width=10)
-        label3.grid(sticky="ew")
+        label3.grid(sticky="ews")
         label4 = Label(master=coolframe,
                        text= "Faciliteiten:",
-                       foreground="blue",
+                       foreground="#003082",
                        font=("Helvetica", 6, 'bold'),
-                       background="yellow",
+                       background="#FFC917",
                        wraplength=100,
                        width=10)
         label4.grid(sticky="ew", row= 4,column= 0,columnspan=2)
         label7 = Label(master=coolframe, background="#FFC917")
         label7.grid(row=5, sticky="nesw")
-        label5 = Label(master=coolframe, image=picture1, background= "yellow")
+        label5 = Label(master=coolframe, image=picture1, background= "#FFC917")
         label5.image = picture1
         label5.grid(row=5, column=0, sticky="w", padx=25)
-        label6 = Label(master=coolframe, image= picture2, background="yellow")
+        label6 = Label(master=coolframe, image= picture2, background="#FFC917")
         label6.image = picture2
         label6.grid(row=5 , column=0, sticky="w")
 
 
-        coolframe.grid(sticky="w",column=frame, row=0, padx=5)
+        coolframe.grid(sticky="w",column=frame, row=0, padx=5,pady=(20,0))
 
 
 
@@ -590,9 +592,9 @@ def station_scherm(station):
 
 
 def startscherm():
-    blue_frame = tkinter.Frame(bd=0, highlightthickness=0, background='blue')
-    yellow_frame = tkinter.Frame(bd=0, highlightthickness=0, background='yellow')
-    yellow_frame1 = tkinter.Frame(bd=0, highlightthickness=0, background='yellow')
+    blue_frame = tkinter.Frame(bd=0, highlightthickness=0, background='#003082')
+    yellow_frame = tkinter.Frame(bd=0, highlightthickness=0, background='#FFC917')
+    yellow_frame1 = tkinter.Frame(bd=0, highlightthickness=0, background='#FFC917')
     yellow_frame.place(x=0, y=0, relwidth=1, relheight=.25, anchor="nw")
     blue_frame.place(x=0, rely=.25, relwidth=1, relheight=.75, anchor="nw")
     yellow_frame1.place(relx=0.19, rely=0.4, relwidth=0.62, relheight=.5, anchor="nw")
@@ -600,20 +602,20 @@ def startscherm():
     label = Label(master=root,
                   text="NS Startscherm",
                   height=2,
-                  background='yellow',
+                  background='#FFC917',
                   font=("helvetica",12,"bold"),
-                  foreground='blue')
+                  foreground='#003082')
     label.pack(side=TOP, padx=20, pady=40)
     label1 = Label(master=root,
                    text="Kies 1 van onderstaande opties:",
                    background='white',
                    font=("helvetica",12, 'bold'),
-                   foreground='blue')
+                   foreground='#003082')
     label1.pack(ipady=10, ipadx=60)
 
     button1 = Button(master=root,
                      text="Stationscherm",
-                     background='blue',
+                     background='#003082',
                      foreground='white',
                      command=station_scherm_begin
                      )
@@ -621,7 +623,7 @@ def startscherm():
 
     button2 = Button(master=root,
                      text="Moderator",
-                     background='blue',
+                     background='#003082',
                      foreground='white',
                      command=moderator_scherm_inlog
                      )
@@ -629,7 +631,7 @@ def startscherm():
 
     button3 = Button(master=root,
                      text="Bericht achterlaten",
-                     background='blue',
+                     background='#003082',
                      foreground='white',
                      command= gebruikersvragen)
     button3.pack(ipadx=20, ipady=10,pady= 3)
