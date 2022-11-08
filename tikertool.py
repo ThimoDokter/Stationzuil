@@ -1,5 +1,4 @@
-
-
+#toeveogen alle library's
 import tkinter
 from tkinter import *
 from PIL import ImageTk, Image
@@ -9,37 +8,44 @@ import csv
 import psycopg2
 import requests
 import math
-api_key = "c1ea90dc353396b8ef9573319e598c85"
-connection_string = "host='localhost' dbname='stationzuilfinal' user='postgres' password='kaas'"
+#einde toevoegen librarys
+api_key = "c1ea90dc353396b8ef9573319e598c85"# Api key string, word gebruikt voor toegang tot wheater API
+connection_string = "host='localhost' dbname='stationzuilfinal' user='postgres' password='kaas'"# string voor connecten emt database
 
-stationslijst = ['Arnhem', 'Almere', 'Oss']
+stationslijst = ['Arnhem', 'Almere', 'Oss'] #lijst met de 3 gekozen stations
 
-root = Tk()
-root.configure(bg="#003082")
+root = Tk()# initialiseert tinker(GUI)
+root.configure(bg="#003082")# Zet de achtergrond van de GUI
 def get_temprature(stad):
-    response = requests.get("http://api.openweathermap.org/geo/1.0/direct?q={},NL&limit=1&appid={}".format(stad, api_key))
-    lat = response.json()[0]['lat']
-    lon = response.json()[0]['lon']
+    """"
+    Deze code maakt connectie met de wheaterAPI, deze code vraagt om een stad, en returned de tempretatuur
+    in de doorgegeven stad.
+    """
+    response = requests.get("http://api.openweathermap.org/geo/1.0/direct?q={},NL&limit=1&appid={}".format(stad, api_key)) # haalt de gegevens op van de wheater API
+    lat = response.json()[0]['lat'] # pakt de Latitude uit de Json response geeft de waarde aan de variable Lat
+    lon = response.json()[0]['lon'] # pakt de Longitude uit de Json response geeft de waarde aan de variable Lon
 
     response =  requests.get("https://api.openweathermap.org/data/2.5/weather?lat={}&lon={}&appid={}".format(lat, lon, api_key))
-    temperature = response.json()["main"]["temp"] -273.15
-    temperature = math.floor(temperature)
-    return temperature
+    #Haalt de Temperatuur op uit de Wheater Api gebruikt daarbij de eerder verkregen lat en lon
+    temperature = response.json()["main"]["temp"] -273.15 #geeft de temperatuur in celsius
+    temperature = math.floor(temperature)# rond de temperatuur af
+    return temperature # returned de temperatuur
 def get_time():
+    """
+    Deze code pakt de huidige tijd en datum, zet het in een lijst.
+    Deze code returned daarna deze lijst.
+    """
+    secconds = datetime.now().second# Pakt huidige seconde
+    minute = datetime.now().minute # pakt huidig minuut
+    hour = datetime.now().hour# pakt huidig uur
+    tijd_string = str(hour) + ":" + str(minute) + ":" + str(secconds)# plakt uur, minuut en seconde aan elkaar
 
-    secconds = datetime.now().second
-    minute = datetime.now().minute
-    hour = datetime.now().hour
-    tijd_string = str(hour) + ":" + str(minute) + ":" + str(secconds)
-    print(tijd_string)
-
-    month = datetime.now().month
-    date = datetime.now().day
-    year = datetime.now().year
-    datum_string = str(year) + "-" + str(month) + "-" + str(date)
-    print(datum_string)
-    lijst = [tijd_string, datum_string]
-    return lijst
+    month = datetime.now().month# pakt huidige maand
+    date = datetime.now().day# pakt huidige dag
+    year = datetime.now().year# pakt huidig jaar
+    datum_string = str(year) + "-" + str(month) + "-" + str(date)# plakt jaar, maand en dag aan elkaar
+    lijst = [tijd_string, datum_string]# zet de tijd en datum in een lijst
+    return lijst # returned de lijst
 
 def randomstation():
     """"
@@ -50,197 +56,208 @@ def randomstation():
     i = 0
     while i == 0:
         stations = ['Arnhem','Almere', 'Oss']
-        station = stations[random.randrange(0,3)]
-        print(station)
+        station = stations[random.randrange(0,3)]# kiest een random station uit de lijst stations
         i = 1
-    return station
-station = randomstation()
+    return station # returned dit station
+station = randomstation()# geeft de waarde van het random station aan de globale waarde station.
 
 
 def standaarvragen(naam, bericht):
+    """"
+    Code vraagt om een naam, en bericht, kijkt als het bericht niet te lang is. en als de ingevulde naam leeg is
+    word de naam naar anoniem gezet, als dit klopt word de tijd toegevoegd en word het naar een csv bestand
+    geschreven
+    """
     lijst = []
 
-    if naam == "":
+    if naam == "": # als er niks bij naam ingevuld is word de naam naar anoniem gezet
         naam = "anoniem"
-    if len(bericht) > 140:
+    if len(bericht) > 140: # als het bericht langer dan 140 characters is word er opnieuw om de gegevens gevraagd
         gebruikersvragen()
-    else:
+    else: # als het bericht niet langer is, word de gebruiker naar een scherm gestuurd waar je ziet dat het succesvol gelukt is
         bericht_achtergelaten()
 
-    tijd = get_time()
+    tijd = get_time() # haalt de tijd op uit de functie "get_time" en geeft dit aan de waarde tijd
     gebruiker_gegevens = [naam, bericht]
     gebruiker_gegevens.append(tijd[0])
     gebruiker_gegevens.append(tijd[1])
     gebruiker_gegevens.append(station)
-
-    with open("kaas.csv") as reader:
+    # gegevens zijn toegevoeg aan een lijst
+    with open("kaas.csv") as reader:# opent de file, en leest alles wat in het bestand staat en voegt dat toe aan een lijst
         read = csv.reader(reader, delimiter=',')
         for lines in read:
             lijst.append(lines)
 
-    lijst.append(gebruiker_gegevens)
+    lijst.append(gebruiker_gegevens)# voegt de gegevens toe aan de lijst
 
     print(lijst)
-    with open("kaas.csv", "w", newline='') as f:
+    with open("kaas.csv", "w", newline='') as f:# write alles inclusief de nieuwe data terug naar het bestand
         write = csv.writer(f)
         write.writerows(lijst)
 
 
 def moderator_start(naam, e_mail, keuring):
-    moderator_naam = naam
-    moderator_e_mail  = e_mail
+    """"
+    vraagt op de naam, e-mail, en als het goed of afgekeurd is.
+    deze gegevens worden daarna naar een database geschreven
+    """
     lijst = []
-    with open("kaas.csv") as reader:
+    with open("kaas.csv") as reader:# leest alle informatie uit het csv bestand
         read = csv.reader(reader, delimiter=',')
         for lines in read:
             lijst.append(lines)
     lijst_leeg = []
-    if lijst == lijst_leeg:
-        print("lijst is leeg")
+    if lijst == lijst_leeg:# als de lijst uit het csv bestand leeg is word de moderator naar een scherm gestuurd die zegt dat alles gemodereerd is
         moderator_eind_scherm()
-    else:
+    else:#als er wel dingen is het bestand zit word dit naar de moderator gestuurd om gemodereerd te worden.
         lol = moderator_scherm(lijst[0][0], lijst[0][1], naam, e_mail)
-        print("kaas")
 
-    if keuring == "goedgekeurd" or keuring == "afgekeurd":
+    if keuring == "goedgekeurd" or keuring == "afgekeurd":# als het bericht goed of afgekeurd is word onderstaande code uitgevoerd
 
-        moderator_tijd = get_time()
-        tijd_string = moderator_tijd[0]
-        datum_string = moderator_tijd[1]
-        conn = psycopg2.connect(connection_string)  # get a connection with the database
-        cursor = conn.cursor()
-        query = """INSERT INTO keuring ( goed_afgekeurd, datum, tijd)
-                           VALUES (%s, %s, %s);"""
+        moderator_tijd = get_time()# pakt de tijd uit de functie "Get_Time()"
+        tijd_string = moderator_tijd[0] # voegt de waardes toe aan een lijst
+        datum_string = moderator_tijd[1] # Voegt de waardes toe aan een lijst
+        conn = psycopg2.connect(connection_string)  # Maakt een conectie met de database
+        cursor = conn.cursor() # plaats de cursor
+        query = """INSERT INTO keuring ( goed_afgekeurd, datum, tijd) 
+                           VALUES (%s, %s, %s);""" # Query vor het writen van "goed_afgekeurd", "datum", "tijd" naar de tabel keuring
         query1 = """INSERT INTO review (  datum, tijd, naam, bericht, station )
-                           VALUES ( %s, %s, %s, %s, %s);"""
+                           VALUES ( %s, %s, %s, %s, %s);""" # Query voor het writen van datum, tijd,naam,bericht,station naar de tabel review
         query2 = """INSERT INTO moderator ( naam, e_mail_adres)
-                           VALUES (%s, %s);"""
-        data = (keuring, datum_string, tijd_string)
-        data1 = (lines[3], lines[2], lines[0], lines[1], lines[4])
-        data2 = (naam, e_mail)
-        cursor.execute(query, data)
-        cursor.execute(query1, data1)
-        cursor.execute(query2, data2)
-        conn.commit()
-        conn.close()
-        lijst1 = lijst[1:]
+                           VALUES (%s, %s);"""# query voor het writen van naam, e_mail_adres naar de tabel moderator
+        data = (keuring, datum_string, tijd_string)# vult de waardes in op de placeholders
+        data1 = (lines[3], lines[2], lines[0], lines[1], lines[4])# vult de waardes in op de placeholders
+        data2 = (naam, e_mail)# vult de waardes in op de placeholders
+        cursor.execute(query, data)# writen van de data en de queries naar de database
+        cursor.execute(query1, data1)# writen van de data en de queries naar de database
+        cursor.execute(query2, data2)# writen van de data en de queries naar de database
+        conn.commit()# commit de executes
+        conn.close()# sluit de database connectie
+        lijst1 = lijst[1:]# haalt de eerste lijn uit de lijst
         keuring = ""
-        with open("kaas.csv", "w", newline='') as f:
+        with open("kaas.csv", "w", newline='') as f:# write de lijst zonder de eerste waarde terug naar het csv bestand
             write = csv.writer(f)
             write.writerows(lijst1)
-def moderator_end(naam, e_mail, keuring):
-    moderator_naam = naam
-    moderator_e_mail = e_mail
-    moderator_keuring = keuring
-    print("kaas")
 
 def root_clear():
-        '''Maakt GUI leeg'''
-        for widget in root.winfo_children():
-            widget.destroy()
+    """"
+    Maakt het Gui scherm leeg
+    """
+    for widget in root.winfo_children():
+        widget.destroy()
 
 
 def bericht_achtergelaten():
+    """"
+    laat de gebruiker weten dat het bericht succesvol verzonden is
+
+    """
     root_clear()
-    frame = Frame(master=root,
+    frame = Frame(master=root, # create een frame
                    background="",
                    height=300)
-    label = Label(master=frame,
+    label = Label(master=frame,# create een label
                   text="NS Station /station/",
                   height=2,
                   background='#FFC917',
                   font=("helvetica",12,"bold"),
                   foreground='#003082')
-    label.pack()
-    frame.pack(ipadx=300, ipady=8, pady=(0, 70))
+    label.pack()# packed de label
+    frame.pack(ipadx=300, ipady=8, pady=(0, 70)) # packed het frame
 
-    frame1 = Frame(master=root,
+    frame1 = Frame(master=root,# create een frame
                    background= '#FFC917',
                    height=400)
 
-    label1 = Label(master=frame1,
+    label1 = Label(master=frame1,# create een label
                    text="Bericht succesvol verzonden!",
                    background='white',
                    font=("helvetica",16, 'bold'),
                    foreground='#003082',
                    padx=20)
-    label1.grid(pady=(0,10), column=0, row=0, columnspan=2)
-    label2 = Label(master=frame1,
+    label1.grid(pady=(0,10), column=0, row=0, columnspan=2) # packed de label met een grid
+    label2 = Label(master=frame1,# create een label
                    text="Het bericht is succesvol verzonden,\nen zal binnenkort beoordeeld worden",
                    background='#FFC917',
                    font=("helvetica",12, 'bold'),
                    foreground='#003082',
                    padx=20)
-    label2.grid(pady=(0,10), column=0, row=1, columnspan=2)
-    frame1.pack(pady=(0, 70))
+    label2.grid(pady=(0,10), column=0, row=1, columnspan=2)# packed de label met een grid
+    frame1.pack(pady=(0, 70))# create een frame
 
 
 def gebruikersvragen():
+    """"
+       Dit is het scherm waar mensen hun bericht en naam achter kunnen laten
+    als mensen op de knop drukt worden deze waarde doorverwezen naar de functie standaarvragen() daar word het
+    naar een csv bestand geschreven
 
+    """
     root_clear()
     frame = Frame(master=root,
                    background="#FFC917",
                    height=300)
-    label = Label(master=frame,
+    label = Label(master=frame,# create een label
                   text="NS Station: {}".format(station),
                   height=2,
                   background='#FFC917',
                   font=("helvetica",12,"bold"),
                   foreground='#003082')
-    label.pack()
-    frame.pack(ipadx=300, ipady=8, pady=(0, 70))
+    label.pack() # packed de label
+    frame.pack(ipadx=300, ipady=8, pady=(0, 70))# packed het frame
 
 
-    frame1 = Frame(master=root,
+    frame1 = Frame(master=root,# create een frame
                    background= '#FFC917',
                    height=400)
 
-    label1 = Label(master=frame1,
+    label1 = Label(master=frame1,# create een label
                    text="Laat hier uw opmerking achter!",
                    background='white',
                    font=("helvetica",16, 'bold'),
                    foreground='#003082',
                    padx=20)
-    label1.grid(pady=(0,10), column=0, row=0, columnspan=2)
-    label2 = Label(master=frame1,
+    label1.grid(pady=(0,10), column=0, row=0, columnspan=2) # packed de label met een grid
+    label2 = Label(master=frame1,# create een label
                    text="Naam:",
                    foreground='#003082',
                    font=("Helvetica", 12, 'bold'),
                    background='#FFC917')
-    label2.grid(padx=20, column=0, row= 1, sticky="w")
-    label3 = Label(master=frame1,
+    label2.grid(padx=20, column=0, row= 1, sticky="w")# packed de label met een grid
+    label3 = Label(master=frame1,# create een label
                    text="Bericht:",
                    foreground='#003082',
                    font=("Helvetica", 12, 'bold'),
                    background='#FFC917')
-    label3.grid(padx=20, pady=20, row=2, column=0, sticky="w")
+    label3.grid(padx=20, pady=20, row=2, column=0, sticky="w")# packed de label met een grid
 
-    entry = Entry(master=frame1)
-    entry.grid(column=1, row=1)
+    entry = Entry(master=frame1) # create een entry vak waar gebruiker gegevens in kunnen vullen
+    entry.grid(column=1, row=1) #packed de entry met een grid
 
-    entry1 = Entry(master=frame1)
-    entry1.grid(column=1, row=2)
+    entry1 = Entry(master=frame1)# create een entry vak waar gebruiker gegevens in kunnen vullen
+    entry1.grid(column=1, row=2) # packed de entry met een grid
 
-    button = Button(master=frame1,
+    button = Button(master=frame1, # create een button waar mensen op kunnen klikken, als deze button ingedrrukt word
+                    #de functie "standaardvragen()gestart met de gegevens ingevuld in de entry's"
                     text="verzenden",
                     background="#003082",
                     foreground="#FFC917",
                     command=lambda: standaarvragen(entry.get(), entry1.get()))
-    button.grid(row=3, column=0, columnspan=2, pady=(0, 20))
+    button.grid(row=3, column=0, columnspan=2, pady=(0, 20))# packed de button met een grid
 
-
-    frame1.pack(pady=(0, 70))
-
-
-
+    frame1.pack(pady=(0, 70)) #packed de frame
     root.mainloop()
 
 def moderator_scherm_inlog():
+    """"
+    Een scherm waar de moderator kan inloggen door zijn naam en e-mail door te geven
+
+    """
     root_clear()
     frame = Frame(master=root,
                    background="#FFC917",
                    height=300)
-    label = Label(master=frame,
+    label = Label(master=frame,# create een label
                   text="NS Station /station/",
                   height=2,
                   background='#FFC917',
@@ -248,24 +265,24 @@ def moderator_scherm_inlog():
                   foreground='#003082')
     label.pack()
     frame.pack(ipadx=300, ipady=8, pady=(0, 70))
-    frame1 = Frame(master=root,
+    frame1 = Frame(master=root,# create een label
                    background= '#FFC917',
                    height=400)
 
-    label1 = Label(master=frame1,
+    label1 = Label(master=frame1,# create een label
                    text="Moderator inlog",
                    background='white',
                    font=("helvetica",16, 'bold'),
                    foreground='#003082',
                    padx=20)
     label1.grid(pady=(0,10), column=0, row=0, columnspan=2)
-    label2 = Label(master=frame1,
+    label2 = Label(master=frame1,# create een label
                    text="Naam:",
                    foreground='#003082',
                    font=("Helvetica", 12, 'bold'),
                    background='#FFC917')
     label2.grid(padx=20, column=0, row= 1, sticky="w")
-    label3 = Label(master=frame1,
+    label3 = Label(master=frame1,# create een label
                    text="E-mail",
                    foreground='#003082',
                    font=("Helvetica", 12, 'bold'),
@@ -288,9 +305,11 @@ def moderator_scherm_inlog():
 
     frame1.pack(pady=(0, 70))
 def moderator_scherm(naam, bericht, e_mail,naam_mod):
-
+    """"
+    een scherm waar een ingelogde moderator berichten kan goed/afkeuren
+    """
     root_clear()
-    frame = Frame(master=root,
+    frame = Frame(master=root,# create een label
                   background="#FFC917",
                   height=300)
     label = Label(master=frame,
@@ -307,34 +326,34 @@ def moderator_scherm(naam, bericht, e_mail,naam_mod):
                    background= '#FFC917',
                    height=400)
 
-    label1 = Label(master=frame1,
+    label1 = Label(master=frame1,# create een label
                    text="Moderator beoordeling",
                    background='white',
                    font=("helvetica",16, 'bold'),
                    foreground='#003082',
                    padx=20)
     label1.grid(pady=(0,10), column=0, row=0, columnspan=2)
-    label2 = Label(master=frame1,
+    label2 = Label(master=frame1,# create een label
                    text="Naam:",
                    foreground='#003082',
                    font=("Helvetica", 12, 'bold'),
                    background='#FFC917')
     label2.grid(padx=20, column=0, row= 1, sticky="w")
-    label3 = Label(master=frame1,
+    label3 = Label(master=frame1,# create een label
                    text="bericht",
                    foreground='#003082',
                    font=("Helvetica", 12, 'bold'),
                    background='#FFC917')
     label3.grid(padx=20, pady=20, row=2, column=0, sticky="w")
 
-    label4 = Label(master=frame1,
+    label4 = Label(master=frame1,# create een label
                    text=naam,
                    foreground='#003082',
                    font=("Helvetica", 12, 'bold'),
                    background='#FFC917')
     label4.grid(column=1, row=1)
 
-    label5 = Label(master=frame1,
+    label5 = Label(master=frame1,# create een label
                    text=bericht,
                    foreground='#003082',
                    font=("Helvetica", 12, 'bold'),
@@ -358,11 +377,15 @@ def moderator_scherm(naam, bericht, e_mail,naam_mod):
     frame1.pack(pady=(0, 70))
 
 def moderator_eind_scherm():
+    """"
+    geeft door aan de moderator dat er geen reviews meer zijn om te beoordelen
+
+    """
     root_clear()
     frame = Frame(master=root,
                    background="#FFC917",
                    height=300)
-    label = Label(master=frame,
+    label = Label(master=frame,# create een label
                   text="NS Station /station/",
                   height=2,
                   background='#FFC917',
@@ -375,14 +398,14 @@ def moderator_eind_scherm():
                    background= '#FFC917',
                    height=400)
     frame1.grid(pady=(0,10), column=0, row=0, columnspan=2)
-    label1 = Label(master=frame1,
+    label1 = Label(master=frame1,# create een label
                    text="moderator",
                    background='white',
                    font=("helvetica",16, 'bold'),
                    foreground='#003082',
                    padx=20)
     label1.grid(pady=(0,10), column=0, row=0, columnspan=2)
-    label2 = Label(master=frame1,
+    label2 = Label(master=frame1,# create een label
                    text="Er zijn berichten meer om te beoordelen",
                    background='#FFC917',
                    font=("helvetica",12, 'bold'),
@@ -394,7 +417,7 @@ def station_scherm_begin():
     frame = Frame(master=root,
                    background="#FFC917",
                    height=300)
-    label = Label(master=frame,
+    label = Label(master=frame,# create een label
                   text="Station keuze",
                   height=2,
                   background='#FFC917',
@@ -408,14 +431,14 @@ def station_scherm_begin():
                    background= '#FFC917',
                    height=400)
 
-    label1 = Label(master=frame1,
+    label1 = Label(master=frame1,# create een label
                    text="Selecteer een station!",
                    background='white',
                    font=("helvetica",16, 'bold'),
                    foreground='#003082',
                    padx=20)
     label1.grid(pady=(0,10), column=0, row=0, columnspan=2)
-    label2 = Label(master=frame1,
+    label2 = Label(master=frame1,# create een label
                    text="Station:",
                    foreground='#003082',
                    font=("Helvetica", 12, 'bold'),
@@ -442,6 +465,12 @@ def station_scherm_begin():
     root.mainloop()
 
 def station_scherm(station):
+    """"
+    Deze functie is het stationscherm, hier worden de laatste 5 berichten uit de database gehaald, en word op
+    een stationscherm laten zien.
+
+
+    """
     if station == "kies een station":
         station_scherm_begin()
     temperatuur = get_temprature(station)
@@ -470,13 +499,6 @@ def station_scherm(station):
     print(berichtlijst)
     print(stationlijst)
 
-    # img_lift = Image.open("img_lift.png")
-    # img_lift_resize = img_lift.resize((10, 10))
-    # img_lift_good = ImageTk.PhotoImage(img_lift_resize)
-    #
-    # img_ovfiets = ImageTk.PhotoImage(Image.open("img_ovfiets.png"))
-    # img_pr = ImageTk.PhotoImage(Image.open("img_pr.png"))
-    # img_toilet = ImageTk.PhotoImage(Image.open("img_toilet.png"))
 
     image = Image.open("img_lift.png")
     resize_image = image.resize((25, 25))
@@ -501,7 +523,7 @@ def station_scherm(station):
     frame = Frame(master=root,
                   background="#FFC917",
                   height=300)
-    label = Label(master=frame,
+    label = Label(master=frame,# create een label
                   text="NS Station: {}".format(station),
                   height=2,
                   background='#FFC917',
@@ -514,7 +536,7 @@ def station_scherm(station):
     frame2 = Frame(master=root,
                   background="white",
                   height=300)
-    label2 = Label(master=frame2,
+    label2 = Label(master=frame2,# create een label
                   text="Temperatuur: {}". format(temperatuur),
                   height=2,
                   background='white',
@@ -543,20 +565,20 @@ def station_scherm(station):
 
         coolframe = Frame(master= frame1,
                           width= 20)
-        label1 = Label(master=coolframe,
+        label1 = Label(master=coolframe,# create een label
                        text=naamlijst[frame],
                        background='white',
                        font=("helvetica", 12, 'bold'),
                        foreground='#003082',
                        width=10,)
         label1.grid(sticky= "ew", pady=(10,0))
-        label2 = Label(master=coolframe,
+        label2 = Label(master=coolframe,# create een label
                        text="Station: {}".format(stationlijst[frame]),
                        foreground='#003082',
                        font=("Helvetica", 8, 'bold'),
                        background='grey',
                        width=10)
-        label2.grid(sticky= "ew")
+        label2.grid(sticky= "ew")# create een label
         label3 = Label(master=coolframe,
                        text= berichtlijst[frame],
                        foreground='#003082',
@@ -565,7 +587,7 @@ def station_scherm(station):
                        wraplength=100,
                        width=10)
         label3.grid(sticky="ews")
-        label4 = Label(master=coolframe,
+        label4 = Label(master=coolframe,# create een label
                        text= "Faciliteiten:",
                        foreground="#003082",
                        font=("Helvetica", 6, 'bold'),
@@ -592,6 +614,11 @@ def station_scherm(station):
 
 
 def startscherm():
+    """"
+    dit is het startscherm, hier kunnen gebruikers kiezen wat ze willen doen, ze kunnen kiezen uit,
+    stationscherm, moderator en bericht achterlaten
+
+    """
     blue_frame = tkinter.Frame(bd=0, highlightthickness=0, background='#003082')
     yellow_frame = tkinter.Frame(bd=0, highlightthickness=0, background='#FFC917')
     yellow_frame1 = tkinter.Frame(bd=0, highlightthickness=0, background='#FFC917')
